@@ -1,3 +1,4 @@
+//Given with assignment
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
@@ -9,16 +10,16 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-const { isDate } = require("util");
 
+//An array to contain all employee objects - aka the team
 const team = [];
-const ids = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
+//Function to initialize node.js prompt via inquirer method to gather data from the user
 function init() {
-    
+    //Function to collect data about the manager first including some data validation. In future state this would include more sophisticated data validation.
     function addManager(){
         console.log("Thank you for chosing Team Design to track your team. Let's start with your manager.");
         inquirer.prompt([
@@ -27,7 +28,7 @@ function init() {
                 name: "managerName",
                 message: "Who is managing the project?",
                 validate: answer => {
-                    if (!answer){
+                    if (answer){
                         return true;
                     }
                     return "Please enter the manager's name";
@@ -48,7 +49,7 @@ function init() {
                 type: "managerEmail",
                 message: "What is the manager's email address?",
                 validate: answer => {
-                    if (!answer){
+                    if (answer){
                         return true;
                     }
                     return "Please enter the manager's email address";
@@ -66,14 +67,15 @@ function init() {
                 }
             }
         ]).then(answers => {
+            //Adds new object manager using the Manager class
             const manager = new Manager(answers.managerName, answers.managerID, answers.managerEmail, answers.managerOffice);
-            teamQuest.push(manager);
-            isDate.push(answers.managerID);
+            team.push(manager);
+            //Moves to next step in adding team memebers
             addTeam();
         })
     }
 
-
+    //Continue to prompt user for further team data - includes option to "opt out" of adding additional members
     function addTeam(){
         inquirer.prompt([
             {
@@ -83,23 +85,11 @@ function init() {
                 choices: [
                     "intern",
                     "engineer",
-                    "I'm done adding members"
+                    "I'm done adding members."
                 ]
             }
-            // {
-            //     type: "input",
-            //     name: "membName",
-            //     message: "What is your teammate's name?"
-            // },
-            // {
-            //     type: "membrEmail",
-            //     message: "What is your teammate's email address?"
-            // },
-            // {
-            //     type: "input",
-            //     name: "membGithub",
-            //     message: "What iis your teammate's GitHub username?"
-            // }
+
+        //If the user selects either intern or engineer, continue with appropriate prompts. Otherwise, execute generateTeam()
         ]).then(answer => {
             if(answer.membRole === "engineer"){
                 addEngineer();
@@ -108,18 +98,120 @@ function init() {
                 addIntern();
             }
             else{
+                //If no more memebers, generate team
                 generateTeam();
             }
 
         })
     }
-
+    //Similar to addManager - prompt user for engineer specific team info
     function addEngineer(){
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "engName",
+                message: "What is your teammate's name?",
+                validate: answer => {
+                    if (answer){
+                        return true;
+                    }
+                    return "Please enter your teammate's name";
+                }
+            },
+            {
+                type: "engID",
+                message: "What is your teammate's ID?",
+                validate: answer => {
+                    if (answer > 0 ){
+                        return true;
+                    }
+                    return "Please enter a number for the teammate's ID.";
+                }
+            },
+            {
+                type: "engEmail",
+                message: "What is your teammate's email address?",
+                validate: answer => {
+                    if (answer){
+                        return true;
+                    }
+                    return "Please enter your teammate's email address";
+                }
+                    
+            },
+            {
+                type: "input",
+                name: "engGithub",
+                message: "What is your teammate's GitHub username?",
+                validate: answer => {
+                    if (answer){
+                        return true;
+                    }
+                    return "Please enter your teammate's github username or N/A";
+                }
+            }
+        ]).then(answers => {
+            //Adds new object engineer using the Engineer class
+            const engineer = new Engineer(answers.engName, answers.engID, answers.engEmail, answers.engGithub);
+            team.push(engineer);
+            //Prompts for potential new teammate
+            addTeam();
+        })
 
     }
-
+    //Similar to addManager and add Engineer - prompt user for intern specific team info
     function addIntern(){
-
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "internName",
+                message: "What is your teammate's name?",
+                validate: answer => {
+                    if (answer){
+                        return true;
+                    }
+                    return "Please enter your teammate's name";
+                }
+            },
+            {
+                type: "internID",
+                message: "What is your teammate's ID?",
+                validate: answer => {
+                    if (answer >0 ){
+                        return true;   
+                    }
+                    return "Please enter a number for the teammate's ID.";
+                }
+            },
+            {
+                type: "internEmail",
+                message: "What is your teammate's email address?",
+                validate: answer => {
+                    if (answer){
+                        return true;
+                    }
+                    return "Please enter your teammate's email address";
+                }
+                    
+            },
+            {
+                type: "input",
+                name: "internSchool",
+                message: "Where does your teammate go to school?",
+                validate: answer => {
+                    if (answer){
+                        return true;
+                    }
+                    return "Please enter your teammate's school or N/A";
+                }
+            }
+        ]).then(answers => {
+            //Adds new object intern using the class Intern
+            const intern = new Intern(answers.internName, answers.internID, answers.internEmail, answers.internSchool);
+            team.push(intern);
+            //Prompts or any new teammates
+            addTeam();
+        })
     }
 
     // After the user has input all employees desired, call the `render` function (required
@@ -134,12 +226,18 @@ function init() {
 
     function generateTeam(){
 
+        //creates directory if it doesnt exist for output path called teamMembers with style utf-8
+        if (!fs.existsSync(OUTPUT_DIR)) {
+            fs.mkdirSync(OUTPUT_DIR)
+          }
+          fs.writeFileSync(outputPath, render(teamMembers), "utf-8");   
     }
-
+    //Execute addManager to start
     addManager();
 }
 
-
+//initialize app
+init();
 
 
 // HINT: each employee type (manager, engineer, or intern) has slightly different
@@ -152,4 +250,4 @@ function init() {
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
 
-init();
+

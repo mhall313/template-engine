@@ -9,63 +9,138 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const { isDate } = require("util");
 
+const team = [];
+const ids = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
-const managerQuest = [
-    {
-        type: "input",
-        name: "managerName",
-        message: "Who is managing the project?"
-    },
-    {
-        type: "managerEmail",
-        message: "What is the manager's email address?"
-    },
-    {
-        type: "input",
-        name: "managerOffice",
-        message: "What is the manager's office number?"
+function init() {
+    
+    function addManager(){
+        console.log("Thank you for chosing Team Design to track your team. Let's start with your manager.");
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "managerName",
+                message: "Who is managing the project?",
+                validate: answer => {
+                    if (!answer){
+                        return true;
+                    }
+                    return "Please enter the manager's name";
+                }
+            },
+            {
+                type: "input",
+                name: "managerID",
+                message: "What is the manager's ID?",
+                validate: answer => {
+                    if(answer > 0){
+                        return true;
+                    }
+                    return "Please enter a number for the manager's ID.";
+                }
+            },
+            {
+                type: "managerEmail",
+                message: "What is the manager's email address?",
+                validate: answer => {
+                    if (!answer){
+                        return true;
+                    }
+                    return "Please enter the manager's email address";
+                }
+            },
+            {
+                type: "input",
+                name: "managerOffice",
+                message: "What is the manager's office number?",
+                validate: answer => {
+                    if(answer > 0){
+                        return true;
+                    }
+                    return "Please enter a number for the manager's office number.";
+                }
+            }
+        ]).then(answers => {
+            const manager = new Manager(answers.managerName, answers.managerID, answers.managerEmail, answers.managerOffice);
+            teamQuest.push(manager);
+            isDate.push(answers.managerID);
+            addTeam();
+        })
     }
-]
 
-const teamQuest = [
-    {
-        type: "input",
-        name: "membName",
-        message: "What is your teammate's name?"
-    },
-    {
-        type: "list",
-        name: "membRole",
-        message: "What is your teammate's role?",
-        choices: [
-            "intern",
-            "engineer",
-        ]
-    },
-    {
-        type: "membrEmail",
-        message: "What is your teammate's email address?"
-    },
-    {
-        type: "input",
-        name: "membGithub",
-        message: "What iis your teammate's GitHub username?"
+
+    function addTeam(){
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "membRole",
+                message: "What is your teammate's role?",
+                choices: [
+                    "intern",
+                    "engineer",
+                    "I'm done adding members"
+                ]
+            }
+            // {
+            //     type: "input",
+            //     name: "membName",
+            //     message: "What is your teammate's name?"
+            // },
+            // {
+            //     type: "membrEmail",
+            //     message: "What is your teammate's email address?"
+            // },
+            // {
+            //     type: "input",
+            //     name: "membGithub",
+            //     message: "What iis your teammate's GitHub username?"
+            // }
+        ]).then(answer => {
+            if(answer.membRole === "engineer"){
+                addEngineer();
+            }
+            else if (answer.membRole === "intern"){
+                addIntern();
+            }
+            else{
+                generateTeam();
+            }
+
+        })
     }
-]
 
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
+    function addEngineer(){
 
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
+    }
+
+    function addIntern(){
+
+    }
+
+    // After the user has input all employees desired, call the `render` function (required
+    // above) and pass in an array containing all employee objects; the `render` function will
+    // generate and return a block of HTML including templated divs for each employee!
+    
+    // After you have your html, you're now ready to create an HTML file using the HTML
+    // returned from the `render` function. Now write it to a file named `team.html` in the
+    // `output` folder. You can use the variable `outputPath` above target this location.
+    // Hint: you may need to check if the `output` folder exists and create it if it
+    // does not.
+
+    function generateTeam(){
+
+    }
+
+    addManager();
+}
+
+
+
 
 // HINT: each employee type (manager, engineer, or intern) has slightly different
 // information; write your code to ask different questions via inquirer depending on
@@ -76,3 +151,5 @@ const teamQuest = [
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+
+init();

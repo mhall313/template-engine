@@ -231,11 +231,11 @@ function init() {
 
     function generateTeam(){
 
-        //creates directory if it doesnt exist for output path called teamMembers with style utf-8
+        //creates directory if it doesnt exist for output path and using the array team, writes a file with format utf-8
         if (!fs.existsSync(OUTPUT_DIR)) {
             fs.mkdirSync(OUTPUT_DIR)
           }
-          fs.writeFileSync(outputPath, render(teamMembers), "utf-8");   
+          fs.writeFileSync(outputPath, render(team), "utf-8");   
     }
     //Execute addManager to start
     addManager();

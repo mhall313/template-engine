@@ -35,7 +35,7 @@ function init() {
                 }
             },
             {
-                type: "input",
+                type: "number",
                 name: "managerID",
                 message: "What is the manager's ID?",
                 validate: answer => {
@@ -46,7 +46,8 @@ function init() {
                 }
             },
             {
-                type: "managerEmail",
+                type: "input",
+                name: "managerEmail",
                 message: "What is the manager's email address?",
                 validate: answer => {
                     if (answer){
@@ -119,7 +120,8 @@ function init() {
                 }
             },
             {
-                type: "engID",
+                type: "number",
+                name: "engID",
                 message: "What is your teammate's ID?",
                 validate: answer => {
                     if (answer > 0 ){
@@ -129,7 +131,8 @@ function init() {
                 }
             },
             {
-                type: "engEmail",
+                type: "input",
+                name: "engEmail",
                 message: "What is your teammate's email address?",
                 validate: answer => {
                     if (answer){
@@ -174,7 +177,8 @@ function init() {
                 }
             },
             {
-                type: "internID",
+                type: "number",
+                name: "internID",
                 message: "What is your teammate's ID?",
                 validate: answer => {
                     if (answer >0 ){
@@ -184,7 +188,8 @@ function init() {
                 }
             },
             {
-                type: "internEmail",
+                type: "input",
+                name: "internEmail",
                 message: "What is your teammate's email address?",
                 validate: answer => {
                     if (answer){
